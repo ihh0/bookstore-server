@@ -1,3 +1,9 @@
+/shelf/
+/workspace.xml
+/httpRequests/
+/dataSources/
+/dataSources.local.xml
+
 /tmp
 /out-tsc
 
