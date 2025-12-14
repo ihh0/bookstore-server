@@ -22,11 +22,15 @@ const app = express();
 // --------------------------------------------------------------------------
 // 1. 미들웨어 함수
 // --------------------------------------------------------------------------
-app.use(helmet()); // 보안 헤더 설정
+app.use(helmet({
+    contentSecurityPolicy: false,
+}));
+
 app.use(cors({
     origin: process.env.CORS_ORIGIN || '*',
     credentials: true
 }));
+
 app.use(express.json({ limit: '10mb' })); // 요청 크기 제한
 app.use(express.urlencoded({ extended: true }));
 
