@@ -34,18 +34,18 @@
 
 ### 단계별 설치 및 실행
 
-1. 레포지토리 클론 및 의존성 설치
+#### 1. 레포지토리 클론 및 의존성 설치
 
 <pre><code>git clone {repository-url}
 cd bookstore-server
 npm install </code></pre>
 
-2. 환경 변수 설정
+#### 2. 환경 변수 설정
 <pre><code>cp .env.example .env
 # .env 파일을 열어 DB_URL, REDIS_URL 등을 본인 환경에 맞게 수정하세요.
 </code></pre>
 
-3. 데이터베이스 마이그레이션 및 시드 데이터 생성
+#### 3. 데이터베이스 마이그레이션 및 시드 데이터 생성
 <pre><code># 테이블 생성
 npx prisma migrate dev --name init
 
@@ -53,9 +53,7 @@ npx prisma migrate dev --name init
 npx prisma db seed
 </code></pre>
 
-
-
-4. 서버 실행
+#### 4. 서버 실행
 
 <pre><code># 개발 모드 (소스 수정 시 자동 재시작)
 npm run dev
@@ -181,16 +179,18 @@ npx prisma db seed 명령어로 생성되는 테스트용 계정입니다.
 
 * 검색 기능: 현재 MySQL LIKE 쿼리를 사용하므로 대량 데이터 검색 시 성능 저하 우려.
 
+* 카테고리 테이블: 책의 정보에 저장되는 카테고리가 단순 문자열로 구성됨.
+
 * 결제 연동: PG사 연동 없이 로직상으로만 결제 완료 처리됨.
 
 * 이미지 업로드: 실제 파일 업로드가 아닌 URL 문자열 저장 방식 사용.
 
+* 주문 취소 요청 시스템: 주문 취소를 요청하고, 관리자가 승인하는 구조 미구현.
+
 ### 향후 개선 계획 (Roadmap)
 
-* [ ] Full Text Search: Elasticsearch 또는 MySQL Full-Text Index 도입으로 검색 성능 개선.
+* 카테고리 테이블 추가 및 도서 검색에 적용
 
-* [ ] Image Upload: AWS S3 또는 로컬 스토리지 업로드 API 구현 (multer 사용).
+* 도서 표지를 업로드하고 저장하는 기능 구현.
 
-* [ ] CI/CD: GitHub Actions를 이용한 자동 배포 파이프라인 구축.
-
-* [ ] Test Coverage: Jest를 이용한 유닛/통합 테스트 커버리지 80% 이상 확보.
+* GitHub Actions를 이용한 자동 배포 파이프라인 구축.
