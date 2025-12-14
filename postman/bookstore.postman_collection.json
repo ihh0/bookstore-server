@@ -1,0 +1,918 @@
+{
+	"info": {
+		"_postman_id": "98e84cbd-8de6-4be4-8787-dc93db1e5e1f",
+		"name": "bookstore",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49022492",
+		"_collection_link": "https://lunar-equinox-8047997.postman.co/workspace/%ED%99%A9%EC%9D%B8%ED%9A%A8's-Workspace~b6caedd3-e0c3-485a-8f60-28b07c92dea8/collection/49022492-98e84cbd-8de6-4be4-8787-dc93db1e5e1f?action=share&source=collection_link&creator=49022492"
+	},
+	"item": [
+		{
+			"name": "health check",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}health",
+					"host": [
+						"{{domain}}health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth - register",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": \"testuser123\",\n  \"email\": \"test123@example.com\",\n  \"password\": \"password123!\",\n  \"name\": \"유저\",\n  \"phoneNumber\": \"010-1234-5678\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}auth/register",
+					"host": [
+						"{{domain}}auth"
+					],
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth - login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"access_token\", pm.response.json().accessToken);",
+							"pm.environment.set(\"refresh_token\", pm.response.json().refreshToken);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": \"testuser123\",\n  \"password\": \"password123!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}auth/login",
+					"host": [
+						"{{domain}}auth"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth - login (admin)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"access_token\", pm.response.json().accessToken);",
+							"pm.environment.set(\"refresh_token\", pm.response.json().refreshToken);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": \"admin\",\n  \"password\": \"admin1234!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}auth/login",
+					"host": [
+						"{{domain}}auth"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth - refresh",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"access_token\", pm.response.json().accessToken);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{refresh_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}auth/refresh",
+					"host": [
+						"{{domain}}auth"
+					],
+					"path": [
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth - logout",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}auth/logout",
+					"host": [
+						"{{domain}}auth"
+					],
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user - get profile",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}users/me",
+					"host": [
+						"{{domain}}users"
+					],
+					"path": [
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user - update profile",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"변경된 이름\",\n  \"address\": \"부산광역시 해운대구\",\n  \"phoneNumber\": \"010-9999-8887\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}users/me",
+					"host": [
+						"{{domain}}users"
+					],
+					"path": [
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user - update password",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"currentPassword\": \"password123!\",  \n  \"newPassword\": \"newpassword123!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}users/password",
+					"host": [
+						"{{domain}}users"
+					],
+					"path": [
+						"password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user - delete account",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"변경된 이름\",\n  \"address\": \"부산광역시 해운대구\",\n  \"phoneNumber\": \"010-9999-8888\"\n}"
+				},
+				"url": {
+					"raw": "{{domain}}users/me",
+					"host": [
+						"{{domain}}users"
+					],
+					"path": [
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "book - create book",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"모던 웹 백엔드 개발\",\n  \"author\": \"김개발\",\n  \"description\": \"Node.js와 Express로 배우는 백엔드 기초부터 심화까지\",\n  \"price\": 35000,\n  \"stockQuantity\": 100,\n  \"isbn\": \"978-89-0000-0001\",\n  \"publishedDate\": \"2024-03-01\",\n  \"category\": \"IT/컴퓨터\",\n  \"discountRate\": 0.1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}books",
+					"host": [
+						"{{domain}}books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "book - get books",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}books?page=1&size=20&sort=price,DESC",
+					"host": [
+						"{{domain}}books"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "size",
+							"value": "20"
+						},
+						{
+							"key": "sort",
+							"value": "price,DESC"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "book - get books (by name)",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}books?keyword=경영",
+					"host": [
+						"{{domain}}books"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "size",
+							"value": "5",
+							"disabled": true
+						},
+						{
+							"key": "sort",
+							"value": "price,DESC",
+							"description": "createdAt,ASC",
+							"disabled": true
+						},
+						{
+							"key": "keyword",
+							"value": "경영"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "book - get books (by category)",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}books?category=과학",
+					"host": [
+						"{{domain}}books"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "size",
+							"value": "5",
+							"disabled": true
+						},
+						{
+							"key": "sort",
+							"value": "price,DESC",
+							"description": "createdAt,ASC",
+							"disabled": true
+						},
+						{
+							"key": "category",
+							"value": "과학"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "book - get book detail",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}books/1",
+					"host": [
+						"{{domain}}books"
+					],
+					"path": [
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "book - update book (admin)",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"price\": 32000,\n  \"stockQuantity\": 95,\n  \"description\": \"내용이 수정되었습니다.\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}books/1",
+					"host": [
+						"{{domain}}books"
+					],
+					"path": [
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "order - create order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"items\": [\n    { \"bookId\": 1, \"quantity\": 2 },\n    { \"bookId\": 3, \"quantity\": 1 }\n  ],\n  \"deliveryAddress\": \"서울시 강남구 테헤란로 123\",\n  \"paymentMethod\": \"card\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}orders",
+					"host": [
+						"{{domain}}orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "order - get orders",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}orders",
+					"host": [
+						"{{domain}}orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "order - get order detail",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}orders/1",
+					"host": [
+						"{{domain}}orders"
+					],
+					"path": [
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "order - cancel order",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}orders/1/cancel",
+					"host": [
+						"{{domain}}orders"
+					],
+					"path": [
+						"1",
+						"cancel"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cart - add to cart",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"bookId\": 1,\n  \"quantity\": 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}carts",
+					"host": [
+						"{{domain}}carts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cart - get cart items",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}carts",
+					"host": [
+						"{{domain}}carts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cart - remove item",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}carts/1",
+					"host": [
+						"{{domain}}carts"
+					],
+					"path": [
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cart - change quantity",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"quantity\": 10\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}carts/2",
+					"host": [
+						"{{domain}}carts"
+					],
+					"path": [
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "review - create review",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"bookId\": 1,\n  \"rating\": 5,\n  \"content\": \"이 책 정말 추천합니다! 백엔드 개발에 큰 도움이 되었어요.\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}reviews",
+					"host": [
+						"{{domain}}reviews"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "review - get reviews",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}reviews?bookId=1",
+					"host": [
+						"{{domain}}reviews"
+					],
+					"query": [
+						{
+							"key": "bookId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "review - toggle review like",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}reviews/1/likes",
+					"host": [
+						"{{domain}}reviews"
+					],
+					"path": [
+						"1",
+						"likes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "review - delete review",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}reviews/1",
+					"host": [
+						"{{domain}}reviews"
+					],
+					"path": [
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "comment - create comment",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"content\": \"저도 공감합니다. 특히 3장이 좋았어요.\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}reviews/2/comments",
+					"host": [
+						"{{domain}}reviews"
+					],
+					"path": [
+						"2",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "comment - get comments",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}reviews/1/comments",
+					"host": [
+						"{{domain}}reviews"
+					],
+					"path": [
+						"1",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "comment - toggle comment like",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}reviews/comments/1/likes",
+					"host": [
+						"{{domain}}reviews"
+					],
+					"path": [
+						"comments",
+						"1",
+						"likes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "comment - delete comment",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{domain}}reviews/comments/1",
+					"host": [
+						"{{domain}}reviews"
+					],
+					"path": [
+						"comments",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "wishlist - add to wishlist",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"bookId\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{domain}}wishlist",
+					"host": [
+						"{{domain}}wishlist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "wishlist - get wishlist",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"bookId\": 1\n}"
+				},
+				"url": {
+					"raw": "{{domain}}wishlist",
+					"host": [
+						"{{domain}}wishlist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "wishlist - remove from wishlist",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"bookId\": 1\n}"
+				},
+				"url": {
+					"raw": "{{domain}}wishlist/1",
+					"host": [
+						"{{domain}}wishlist"
+					],
+					"path": [
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
