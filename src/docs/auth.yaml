@@ -1,0 +1,113 @@
+tags:
+  - name: Auth
+    description: 회원 가입, 로그인 및 토큰 관리
+
+paths:
+  /auth/register:
+    post:
+      summary: 회원가입
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+                - email
+                - password
+                - phoneNumber
+              properties:
+                id:
+                  type: string
+                  description: 로그인 ID
+                  example: "user123"
+                email:
+                  type: string
+                  format: email
+                  example: "user123@example.com"
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: "password123!"
+                name:
+                  type: string
+                  example: "홍길동"
+                phoneNumber:
+                  type: string
+                  example: "010-1234-5678"
+                address:
+                  type: string
+                  example: "서울시 강남구 테헤란로 123"
+      responses:
+        201:
+          description: 회원가입 성공
+        409:
+          description: 이미 존재하는 ID, 이메일 또는 전화번호
+
+  /auth/login:
+    post:
+      summary: 로그인
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+                - password
+              properties:
+                id:
+                  type: string
+                  example: "user123"
+                password:
+                  type: string
+                  example: "password123!"
+      responses:
+        200:
+          description: 로그인 성공 (토큰 발급)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+        401:
+          description: 인증 실패
+
+  /auth/refresh:
+    post:
+      summary: 토큰 재발급 (Access Token 갱신)
+      tags: [Auth]
+      parameters:
+        - in: header
+          name: Authorization
+          description: Refresh Token (Bearer <token>)
+          required: true
+          schema:
+            type: string
+          example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      responses:
+        200:
+          description: 토큰 재발급 성공
+        401:
+          description: 유효하지 않거나 만료된 Refresh Token
+
+  /auth/logout:
+    post:
+      summary: 로그아웃
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: 로그아웃 성공

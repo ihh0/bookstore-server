@@ -1,0 +1,118 @@
+tags:
+  - name: Orders
+    description: 주문 생성 및 내역 조회
+
+paths:
+  /orders:
+    post:
+      summary: 주문 생성 (결제)
+      tags: [Orders]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - deliveryAddress
+                - items
+              properties:
+                deliveryAddress:
+                  type: string
+                  example: "서울시 강남구 테헤란로 123"
+                paymentMethod:
+                  type: string
+                  example: "card"
+                items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      bookId:
+                        type: integer
+                        example: 1
+                      quantity:
+                        type: integer
+                        example: 2
+      responses:
+        201:
+          description: 주문 성공
+        409:
+          description: 재고 부족
+    get:
+      summary: 주문 목록 조회
+      tags: [Orders]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+      responses:
+        200:
+          description: 주문 내역 반환
+
+  /orders/{id}:
+    get:
+      summary: 주문 상세 조회
+      tags: [Orders]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          example: 10
+      responses:
+        200:
+          description: 주문 상세 정보 반환
+
+  /orders/{id}/cancel:
+    post:
+      summary: 주문 취소
+      tags: [Orders]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          example: 10
+      responses:
+        200:
+          description: 주문 취소 성공
+
+  /orders/{id}/status:
+    put:
+      summary: 주문 상태 변경 (관리자 전용)
+      tags: [Orders]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          example: 10
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [pending, paid, shipped, delivered, canceled]
+                  example: "shipped"
+      responses:
+        200:
+          description: 상태 변경 성공

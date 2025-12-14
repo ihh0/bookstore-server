@@ -1,0 +1,389 @@
+components:
+  schemas:
+    # -------------------------------------------------------------------------
+    # 1. User (사용자)
+    # -------------------------------------------------------------------------
+    User:
+      type: object
+      description: 사용자 계정 정보
+      required:
+        - uid
+        - loginId
+        - email
+        - role
+      properties:
+        uid:
+          type: integer
+          description: 내부 식별자 (PK)
+          example: 1
+        loginId:
+          type: string
+          description: 로그인 ID
+          minLength: 4
+          maxLength: 50
+          example: "user123"
+        email:
+          type: string
+          format: email
+          description: 이메일 주소
+          example: "user123@example.com"
+        name:
+          type: string
+          description: 사용자 이름
+          minLength: 2
+          maxLength: 50
+          example: "홍길동"
+        phoneNumber:
+          type: string
+          description: 전화번호
+          minLength: 10
+          maxLength: 20
+          example: "010-1234-5678"
+        address:
+          type: string
+          description: 기본 배송지 주소
+          example: "서울시 강남구 테헤란로 123"
+        role:
+          type: string
+          enum: [user, admin]
+          description: 사용자 권한
+          default: user
+          example: "user"
+        createdAt:
+          type: string
+          format: date-time
+          description: 가입일시
+        updatedAt:
+          type: string
+          format: date-time
+          description: 정보 수정일시
+        deletedAt:
+          type: string
+          format: date-time
+          nullable: true
+          description: 탈퇴일시 (Soft Delete)
+
+    # -------------------------------------------------------------------------
+    # 2. Book (도서)
+    # -------------------------------------------------------------------------
+    Book:
+      type: object
+      description: 도서 정보
+      required:
+        - title
+        - author
+        - price
+        - stockQuantity
+      properties:
+        id:
+          type: integer
+          description: 도서 식별자 (PK)
+          example: 10
+        title:
+          type: string
+          description: 도서 제목
+          maxLength: 200
+          example: "모던 웹 백엔드 개발"
+        isbn:
+          type: string
+          description: 국제표준도서번호
+          maxLength: 20
+          example: "978-89-0000-0001"
+        coverUrl:
+          type: string
+          description: 표지 이미지 URL
+          maxLength: 255
+          example: "https://example.com/cover.jpg"
+        author:
+          type: string
+          description: 저자
+          maxLength: 100
+          example: "김개발"
+        translator:
+          type: string
+          description: 역자
+          maxLength: 100
+          nullable: true
+          example: "이번역"
+        publisher:
+          type: string
+          description: 출판사
+          maxLength: 100
+          nullable: true
+          example: "IT출판사"
+        publishedDate:
+          type: string
+          format: date
+          description: 출판일
+          example: "2024-03-01"
+        category:
+          type: string
+          description: 카테고리
+          maxLength: 100
+          example: "IT/컴퓨터"
+        description:
+          type: string
+          description: 도서 설명
+          example: "Node.js와 Express로 배우는 백엔드 개발 입문서"
+        price:
+          type: number
+          description: 정가
+          minimum: 0
+          example: 35000
+        stockQuantity:
+          type: integer
+          description: 재고 수량
+          minimum: 0
+          default: 0
+          example: 100
+        discountRate:
+          type: number
+          format: float
+          description: 할인율 (0.0 ~ 1.0)
+          minimum: 0
+          maximum: 1
+          default: 0.0
+          example: 0.1
+        discountPrice:
+          type: number
+          description: 할인가 (할인율 적용된 가격)
+          nullable: true
+          example: 31500
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    # -------------------------------------------------------------------------
+    # 3. Cart (장바구니)
+    # -------------------------------------------------------------------------
+    Cart:
+      type: object
+      description: 장바구니 아이템
+      required:
+        - userId
+        - bookId
+        - quantity
+      properties:
+        id:
+          type: integer
+          description: 장바구니 항목 ID (PK)
+          example: 5
+        userId:
+          type: integer
+          description: 사용자 FK
+          example: 1
+        bookId:
+          type: integer
+          description: 도서 FK
+          example: 10
+        quantity:
+          type: integer
+          description: 수량
+          minimum: 1
+          default: 1
+          example: 2
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    # -------------------------------------------------------------------------
+    # 4. Order (주문)
+    # -------------------------------------------------------------------------
+    Order:
+      type: object
+      description: 주문 내역
+      required:
+        - userId
+        - orderNumber
+        - totalPrice
+        - shippingAddress
+      properties:
+        id:
+          type: integer
+          description: 주문 식별자 (PK)
+          example: 25
+        userId:
+          type: integer
+          description: 주문자 FK
+          example: 1
+        orderNumber:
+          type: string
+          description: 주문 번호 (Unique)
+          maxLength: 50
+          example: "20240305-1234"
+        totalPrice:
+          type: number
+          description: 총 결제 금액
+          minimum: 0
+          example: 70000
+        status:
+          type: string
+          enum: [pending, paid, shipped, delivered, canceled]
+          description: 주문 상태
+          default: pending
+          example: "paid"
+        shippingAddress:
+          type: string
+          description: 배송지 주소
+          example: "서울시 강남구 테헤란로 123"
+        paymentMethod:
+          type: string
+          description: 결제 수단
+          nullable: true
+          example: "card"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    # -------------------------------------------------------------------------
+    # 5. OrderItem (주문 상세)
+    # -------------------------------------------------------------------------
+    OrderItem:
+      type: object
+      description: 주문 상세 품목
+      required:
+        - orderId
+        - bookId
+        - quantity
+        - price
+        - subtotal
+      properties:
+        id:
+          type: integer
+          description: 상세 식별자 (PK)
+          example: 101
+        orderId:
+          type: integer
+          description: 주문 FK
+          example: 25
+        bookId:
+          type: integer
+          description: 도서 FK
+          example: 10
+        quantity:
+          type: integer
+          description: 주문 수량
+          minimum: 1
+          example: 2
+        price:
+          type: number
+          description: 구매 당시 도서 가격 (단가)
+          minimum: 0
+          example: 35000
+        subtotal:
+          type: number
+          description: 소계 (가격 * 수량)
+          minimum: 0
+          example: 70000
+
+    # -------------------------------------------------------------------------
+    # 6. Review (리뷰)
+    # -------------------------------------------------------------------------
+    Review:
+      type: object
+      description: 도서 리뷰
+      required:
+        - userId
+        - bookId
+        - rating
+        - content
+      properties:
+        id:
+          type: integer
+          description: 리뷰 식별자 (PK)
+          example: 50
+        userId:
+          type: integer
+          description: 작성자 FK
+          example: 1
+        bookId:
+          type: integer
+          description: 도서 FK
+          example: 10
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+          description: 평점 (1~5)
+          example: 5
+        content:
+          type: string
+          description: 리뷰 내용
+          minLength: 5
+          example: "정말 좋은 책입니다. 추천해요!"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    # -------------------------------------------------------------------------
+    # 7. ReviewComment (리뷰 댓글)
+    # -------------------------------------------------------------------------
+    ReviewComment:
+      type: object
+      description: 리뷰 댓글
+      required:
+        - userId
+        - reviewId
+        - content
+      properties:
+        id:
+          type: integer
+          description: 댓글 식별자 (PK)
+          example: 12
+        userId:
+          type: integer
+          description: 작성자 FK
+          example: 2
+        reviewId:
+          type: integer
+          description: 리뷰 FK
+          example: 50
+        content:
+          type: string
+          description: 댓글 내용
+          minLength: 2
+          example: "저도 동감합니다!"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    # -------------------------------------------------------------------------
+    # 10. Wishlist (위시리스트)
+    # -------------------------------------------------------------------------
+    Wishlist:
+      type: object
+      description: 찜 목록
+      required:
+        - userId
+        - bookId
+      properties:
+        id:
+          type: integer
+          description: 식별자 (PK)
+          example: 5
+        userId:
+          type: integer
+          description: 사용자 FK
+          example: 1
+        bookId:
+          type: integer
+          description: 도서 FK
+          example: 10
+        createdAt:
+          type: string
+          format: date-time

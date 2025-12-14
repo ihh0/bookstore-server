@@ -1,0 +1,207 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// 1. 사용자 (User) - 사용자 정보 관련
+model User {
+  uid          Int     @id @default(autoincrement())
+  loginId      String  @unique @map("id") @db.VarChar(50)
+  passwordHash String  @map("password_hash") @db.VarChar(255)
+  name         String? @map("username") @db.VarChar(50)
+  email        String  @unique @db.VarChar(100)
+  phoneNumber  String  @unique @map("phone_number") @db.VarChar(20)
+  address      String? @db.Text
+  role         String  @default("user") @db.VarChar(20)
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  // Relations
+  cartItems      Cart[]
+  orders         Order[]
+  reviews        Review[]
+  reviewComments ReviewComment[]
+  reviewLikes    ReviewLike[]
+  commentLikes   ReviewCommentLike[]
+  wishlist       Wishlist[]
+
+  @@map("user")
+}
+
+// 2. 도서 (Book) - 도서 매물 관련 정보
+model Book {
+  id            Int       @id @default(autoincrement())
+  title         String    @db.VarChar(200)
+  isbn          String?   @unique @db.VarChar(20)
+  coverUrl      String?   @map("cover_url") @db.VarChar(255)
+  author        String    @db.VarChar(100)
+  translator    String?   @db.VarChar(100)
+  publisher     String?   @db.VarChar(100)
+  publishedDate DateTime? @map("published_date") @db.Date
+  category      String?   @db.VarChar(100)
+  description   String?   @db.Text
+  price         Decimal   @db.Decimal(10, 2)
+  stockQuantity Int       @default(0) @map("stock_quantity")
+
+  discountRate  Decimal?  @default(0.00) @map("discount_rate") @db.Decimal(5, 2)
+  discountPrice Decimal?  @map("discount_price") @db.Decimal(10, 2)
+  discountStart DateTime? @map("discount_start")
+  discountEnd   DateTime? @map("discount_end")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  // Relations
+  cartItems  Cart[]
+  orderItems OrderItem[]
+  reviews    Review[]
+  wishlist   Wishlist[]
+
+  @@index([title])
+  @@index([author])
+  @@map("book")
+}
+
+// 3. 장바구니 (Cart)
+model Cart {
+  id       Int @id @default(autoincrement())
+  userId   Int @map("user_id")
+  bookId   Int @map("book_id")
+  quantity Int @default(1)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
+  @@map("cart")
+}
+
+// 4. 주문 (Order) - 사용자가 결재(주문)를 등록시 저장
+model Order {
+  id              Int     @id @default(autoincrement())
+  userId          Int     @map("user_id")
+  orderNumber     String  @unique @map("order_number") @db.VarChar(50)
+  totalPrice      Decimal @map("total_price") @db.Decimal(10, 2)
+  status          String  @default("pending") @db.VarChar(20)
+  shippingAddress String  @map("shipping_address") @db.Text
+  paymentMethod   String? @map("payment_method") @db.VarChar(50)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  user       User        @relation(fields: [userId], references: [uid])
+  orderItems OrderItem[]
+
+  @@map("order")
+}
+
+// 5. 주문 상세 (OrderItem) - 주문된 도서 별 정보
+model OrderItem {
+  id       Int     @id @default(autoincrement())
+  orderId  Int     @map("order_id")
+  bookId   Int     @map("book_id")
+  quantity Int     @default(1)
+  price    Decimal @db.Decimal(10, 2)
+  subtotal Decimal @db.Decimal(10, 2)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  book  Book  @relation(fields: [bookId], references: [id])
+
+  @@map("order_item")
+}
+
+// 6. 리뷰 (Review)
+model Review {
+  id      Int    @id @default(autoincrement())
+  userId  Int    @map("user_id")
+  bookId  Int    @map("book_id")
+  rating  Int
+  content String @db.Text
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  user     User            @relation(fields: [userId], references: [uid])
+  book     Book            @relation(fields: [bookId], references: [id])
+  comments ReviewComment[]
+  likes    ReviewLike[]
+
+  @@map("review")
+}
+
+// 7. 리뷰 댓글 (ReviewComment)
+model ReviewComment {
+  id       Int    @id @default(autoincrement())
+  userId   Int    @map("user_id")
+  reviewId Int    @map("review_id")
+  content  String @db.Text
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  user   User                @relation(fields: [userId], references: [uid])
+  review Review              @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  likes  ReviewCommentLike[]
+
+  @@map("review_comment")
+}
+
+// 8. 리뷰 좋아요 (ReviewLike)
+model ReviewLike {
+  id       Int @id @default(autoincrement())
+  userId   Int @map("user_id")
+  reviewId Int @map("review_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user   User   @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, reviewId])
+  @@map("review_like")
+}
+
+// 9. 리뷰 댓글 좋아요 (ReviewCommentLike)
+model ReviewCommentLike {
+  id        Int @id @default(autoincrement())
+  userId    Int @map("user_id")
+  commentId Int @map("comment_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user    User          @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  comment ReviewComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, commentId])
+  @@map("review_comment_like")
+}
+
+// 10. 위시리스트 (Wishlist)
+model Wishlist {
+  id     Int @id @default(autoincrement())
+  userId Int @map("user_id")
+  bookId Int @map("book_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
+  @@map("wishlist")
+}

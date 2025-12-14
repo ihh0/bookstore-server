@@ -1,0 +1,380 @@
+components:
+  schemas:
+    # -------------------------------------------------------------------------
+    # Common (공통)
+    # -------------------------------------------------------------------------
+    Error:
+      type: object
+      description: 에러 응답
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-03-05T12:00:00Z"
+        path:
+          type: string
+          example: "/api/books"
+        status:
+          type: integer
+          example: 400
+        code:
+          type: string
+          example: "INVALID_INPUT"
+        message:
+          type: string
+          example: "입력값이 유효하지 않습니다."
+        details:
+          type: object
+          nullable: true
+          example: { "price": "음수일 수 없습니다." }
+
+    # -------------------------------------------------------------------------
+    # 1. Auth (인증) Requests
+    # -------------------------------------------------------------------------
+    RegisterRequest:
+      type: object
+      description: 회원가입 요청 데이터
+      required:
+        - id
+        - email
+        - password
+        - phoneNumber
+      properties:
+        id:
+          type: string
+          description: 로그인 ID
+          minLength: 4
+          maxLength: 50
+          example: "user123"
+        email:
+          type: string
+          description: 이메일
+          format: email
+          example: "user123@example.com"
+        password:
+          type: string
+          description: 비밀번호
+          minLength: 8
+          format: password
+          example: "password123!"
+        name:
+          type: string
+          description: 사용자 이름
+          minLength: 2
+          maxLength: 50
+          example: "홍길동"
+        phoneNumber:
+          type: string
+          description: 전화번호
+          minLength: 10
+          maxLength: 20
+          example: "010-1234-5678"
+        address:
+          type: string
+          description: 주소
+          example: "서울시 강남구 테헤란로 123"
+
+    LoginRequest:
+      type: object
+      description: 로그인 요청 데이터
+      required:
+        - id
+        - password
+      properties:
+        id:
+          type: string
+          description: 로그인 ID
+          example: "user123"
+        password:
+          type: string
+          description: 비밀번호
+          format: password
+          example: "password123!"
+
+    # RefreshRequest 삭제됨 (토큰이 Header로 이동하여 Body가 없음)
+
+    # -------------------------------------------------------------------------
+    # 2. User (사용자) Requests
+    # -------------------------------------------------------------------------
+    UpdateProfileRequest:
+      type: object
+      description: 내 정보 수정 요청 데이터
+      properties:
+        name:
+          type: string
+          description: 사용자 이름
+          minLength: 2
+          maxLength: 50
+          example: "김철수"
+        phoneNumber:
+          type: string
+          description: 전화번호
+          minLength: 10
+          maxLength: 20
+          example: "010-9876-5432"
+        address:
+          type: string
+          description: 주소
+          example: "부산광역시 해운대구 우동"
+
+    UpdatePasswordRequest:
+      type: object
+      description: 비밀번호 변경 요청 데이터
+      required:
+        - currentPassword
+        - newPassword
+      properties:
+        currentPassword:
+          type: string
+          description: 현재 비밀번호
+          example: "password123!"
+        newPassword:
+          type: string
+          description: 새 비밀번호
+          minLength: 8
+          maxLength: 100
+          example: "newpassword123!"
+
+    # -------------------------------------------------------------------------
+    # 3. Book (도서) Requests
+    # -------------------------------------------------------------------------
+    CreateBookRequest:
+      type: object
+      description: 도서 등록 요청 데이터 (관리자)
+      required:
+        - title
+        - author
+        - price
+      properties:
+        title:
+          type: string
+          description: 도서 제목
+          minLength: 1
+          maxLength: 200
+          example: "모던 웹 백엔드 개발"
+        isbn:
+          type: string
+          description: ISBN
+          example: "978-89-0000-0001"
+        coverUrl:
+          type: string
+          description: 표지 URL
+          format: uri
+          example: "https://example.com/cover.jpg"
+        author:
+          type: string
+          description: 저자
+          minLength: 1
+          example: "김개발"
+        translator:
+          type: string
+          description: 역자
+          example: "박번역"
+        publisher:
+          type: string
+          description: 출판사
+          example: "IT출판사"
+        publishedDate:
+          type: string
+          description: 출판일 (YYYY-MM-DD)
+          format: date
+          example: "2024-03-01"
+        category:
+          type: string
+          description: 카테고리
+          example: "IT/컴퓨터"
+        description:
+          type: string
+          description: 도서 설명
+          example: "Node.js 백엔드 개발 입문서입니다."
+        price:
+          type: number
+          description: 정가
+          minimum: 0
+          example: 35000
+        stockQuantity:
+          type: integer
+          description: 재고 수량
+          minimum: 0
+          default: 0
+          example: 100
+        discountRate:
+          type: number
+          description: 할인율 (0.0 ~ 1.0)
+          minimum: 0
+          maximum: 1
+          example: 0.1
+
+    UpdateBookRequest:
+      type: object
+      description: 도서 수정 요청 데이터 (관리자)
+      properties:
+        title:
+          type: string
+          maxLength: 200
+          example: "모던 웹 백엔드 개발 (개정판)"
+        isbn:
+          type: string
+          example: "978-89-0000-0002"
+        coverUrl:
+          type: string
+          format: uri
+        author:
+          type: string
+        translator:
+          type: string
+        publisher:
+          type: string
+        publishedDate:
+          type: string
+          format: date
+        category:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          minimum: 0
+          example: 38000
+        stockQuantity:
+          type: integer
+          minimum: 0
+          example: 50
+        discountRate:
+          type: number
+          minimum: 0
+          maximum: 1
+
+    # -------------------------------------------------------------------------
+    # 4. Cart (장바구니) Requests
+    # -------------------------------------------------------------------------
+    AddToCartRequest:
+      type: object
+      description: 장바구니 담기 요청 데이터
+      required:
+        - bookId
+      properties:
+        bookId:
+          type: integer
+          description: 도서 ID
+          example: 1
+        quantity:
+          type: integer
+          description: 수량
+          minimum: 1
+          default: 1
+          example: 2
+
+    UpdateCartRequest:
+      type: object
+      description: 장바구니 수량 변경 요청 데이터
+      required:
+        - quantity
+      properties:
+        quantity:
+          type: integer
+          description: 변경할 수량
+          minimum: 1
+          example: 5
+
+    # -------------------------------------------------------------------------
+    # 5. Order (주문) Requests
+    # -------------------------------------------------------------------------
+    CreateOrderRequest:
+      type: object
+      description: 주문 생성 요청 데이터
+      required:
+        - items
+        - deliveryAddress
+      properties:
+        items:
+          type: array
+          description: 주문할 도서 목록
+          minItems: 1
+          items:
+            type: object
+            required:
+              - bookId
+              - quantity
+            properties:
+              bookId:
+                type: integer
+                example: 1
+              quantity:
+                type: integer
+                minimum: 1
+                example: 2
+        deliveryAddress:
+          type: string
+          description: 배송지 주소
+          minLength: 5
+          example: "서울시 강남구 테헤란로 123"
+        paymentMethod:
+          type: string
+          description: 결제 수단
+          example: "card"
+
+    UpdateOrderStatusRequest:
+      type: object
+      description: 주문 상태 변경 요청 데이터 (관리자)
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          description: 변경할 주문 상태
+          enum: [pending, paid, shipped, delivered, canceled]
+          example: "shipped"
+
+    # -------------------------------------------------------------------------
+    # 6. Review (리뷰) Requests
+    # -------------------------------------------------------------------------
+    CreateReviewRequest:
+      type: object
+      description: 리뷰 등록 요청 데이터
+      required:
+        - bookId
+        - rating
+        - content
+      properties:
+        bookId:
+          type: integer
+          description: 도서 ID
+          example: 1
+        rating:
+          type: integer
+          description: 별점 (1~5)
+          minimum: 1
+          maximum: 5
+          example: 5
+        content:
+          type: string
+          description: 리뷰 내용
+          minLength: 5
+          example: "정말 유익한 책이었습니다!"
+
+    CreateCommentRequest:
+      type: object
+      description: 댓글 등록 요청 데이터
+      required:
+        - content
+      properties:
+        content:
+          type: string
+          description: 댓글 내용
+          minLength: 2
+          example: "저도 그렇게 생각해요."
+
+    # -------------------------------------------------------------------------
+    # 7. Wishlist (위시리스트) Requests
+    # -------------------------------------------------------------------------
+    AddWishlistRequest:
+      type: object
+      description: 위시리스트 추가 요청 데이터
+      required:
+        - bookId
+      properties:
+        bookId:
+          type: integer
+          description: 도서 ID
+          example: 1

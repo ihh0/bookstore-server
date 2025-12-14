@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "lib": ["es2020", "dom"],
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
+    // 중요: 커스텀 타입 정의 파일(.d.ts)이 있는 경로를 인식시킵니다.
+    "typeRoots": ["./node_modules/@types", "./src/types"]
+  },
+
+  // 중요: ts-node가 실행될 때 .d.ts 파일을 포함하여 로드하도록 설정합니다.
+  "ts-node": {
+    "files": true
+  },
+
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.test.ts"]
+}
