@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import { prisma } from '../config/db';
 import { AppError, HttpCode } from '../utils/AppError';
 import { UpdateUserInput, UpdatePasswordInput } from '../validations/user.validation';
+import { removeRefreshToken } from "../utils/jwt";
 
 const SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10);
 
@@ -83,5 +84,6 @@ export class UserService {
             where: { uid: userId },
             data: { deletedAt: new Date() },
         });
+        await removeRefreshToken(userId);
     }
 }
